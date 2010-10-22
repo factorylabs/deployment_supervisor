@@ -61,6 +61,9 @@ GEM
     gherkin (2.2.9)
       json (~> 1.4.6)
       term-ansicolor (~> 1.0.5)
+    grit (2.3.0)
+      diff-lcs (~> 1.1)
+      mime-types (~> 1.15)
     i18n (0.4.1)
     json (1.4.6)
     json_pure (1.4.6)
@@ -125,6 +128,7 @@ DEPENDENCIES
   cucumber
   cucumber-rails
   database_cleaner
+  grit
   rails (= 3.0.0)
   rspec-rails (>= 2.0.0)
   sqlite3-ruby
