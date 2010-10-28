@@ -14,6 +14,10 @@ describe "Repo" do
     
     describe ".find" do      
       it "returns a repo object" do
+        subject.stub(:update_or_create_bare_repo) do
+          `git init --bare #{@test_repo_location}`
+          @test_repo_location
+        end
         repo = subject.find(@test_repo_url)
         repo.class.should == Grit::Repo
       end    
