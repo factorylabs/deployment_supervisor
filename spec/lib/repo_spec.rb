@@ -1,25 +1,26 @@
 require File.join(File.dirname(__FILE__), '..', 'spec_helper')
 require 'fileutils'
 
-describe "ChangeLog" do
-  include Rack::Test::Methods
+describe "Repo" do
 
   before :each do
     @test_repo_url = 'http://github.com/mojombo/grit.git'
     @test_repo_location = "#{RAILS_ROOT}/data/repositories/grit.git"
   end
 
-  subject { ChangeLog.new(@test_repo_url) }
-
-  it "shows me a change-log between two tags" do
-#    subject.change_log('previous_deploy_tag', 'current_deploy_tag')
-  end
-
   describe "class methods" do
-    subject { ChangeLog }
-
-    describe ".find_or_create_bare_repo" do
-
+    
+    subject { Repo }
+    
+    describe ".find" do      
+      it "returns a repo object" do
+        repo = subject.find(@test_repo_url)
+        repo.class.should == Grit::Repo
+      end    
+    end
+    
+    describe ".update_or_create_bare_repo" do
+      
       context "if a repo does exist" do
         before(:each) do
           subject.stub(:repo_exists?).and_return true
@@ -27,8 +28,8 @@ describe "ChangeLog" do
 
         it "updates a bare repo if it already exists" do
           subject.should_receive(:update_repo)
-          subject.find_or_create_bare_repo(@test_repo_url)
-        end
+          subject.update_or_create_bare_repo(@test_repo_url)
+        end        
       end
 
       context "if a repo does not exist" do
@@ -43,11 +44,11 @@ describe "ChangeLog" do
 
         it "clones a bare repo if it doesn't exist" do
           subject.should_receive(:clone_bare_repo)
-          subject.find_or_create_bare_repo(@test_repo_location)
+          subject.update_or_create_bare_repo(@test_repo_location)
         end
       end
     end
-
+    
     it "clones a bare repository to the repositories directory" do
       subject.clone_bare_repo(@test_repo_url)
       File.directory?(@test_repo_location).should == true
@@ -81,6 +82,6 @@ describe "ChangeLog" do
     it "returns the repository name of the bare git repository" do
       subject.get_repo_name(@test_repo_url).should == "grit.git"
     end
-
+    
   end
 end
