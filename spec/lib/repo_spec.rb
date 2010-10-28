@@ -55,10 +55,12 @@ describe "Repo" do
       end
     end
         
-    it "clones a bare repository to the repositories directory" do
-      subject.clone_bare_repo(@test_repo_url)
-      File.directory?(@test_repo_location).should == true
-      FileUtils.rm_rf @test_repo_location
+    describe ".clone_bare_repo" do
+      it "clones a bare repository to the repositories directory" do
+        subject.clone_bare_repo(@test_repo_url)
+        File.directory?(@test_repo_location).should == true
+        FileUtils.rm_rf @test_repo_location
+      end
     end
 
     describe ".update_repo" do
@@ -85,14 +87,16 @@ describe "Repo" do
         end
       end
     end
-
-    it "returns the path to the repo" do
-      File.expand_path(subject.get_repo_path(@test_repo_url)).should == File.expand_path(@test_repo_location)
-    end
-
-    it "returns the repository name of the bare git repository" do
-      subject.get_repo_name(@test_repo_url).should == "grit.git"
+    describe ".get_repo_path" do
+      it "returns the path to the repo" do
+        File.expand_path(subject.get_repo_path(@test_repo_url)).should == File.expand_path(@test_repo_location)
+      end
     end
     
+    describe ".get_repo_name" do
+      it "returns the repository name of the bare git repository" do
+        subject.get_repo_name(@test_repo_url).should == "grit.git"
+      end
+    end    
   end
 end
