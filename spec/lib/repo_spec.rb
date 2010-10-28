@@ -6,14 +6,18 @@ describe "Repo" do
   before :each do
     @test_repo_url = 'http://github.com/mojombo/grit.git'
     @test_repo_location = "#{RAILS_ROOT}/data/repositories/grit.git"
+    @fixture_repo_location = "#{RAILS_ROOT}/spec/fixtures/blank_repo"
   end
-
+  
+  
+  
   describe "class methods" do
     
     subject { Repo }
     
     describe ".find" do      
       it "returns a repo object" do
+        subject.stub(:update_or_create_bare_repo).and_return @fixture_repo_location
         repo = subject.find(@test_repo_url)
         repo.class.should == Grit::Repo
       end    
