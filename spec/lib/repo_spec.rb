@@ -5,7 +5,8 @@ describe "Repo" do
 
   before :each do
     @test_repo_url = 'http://github.com/mojombo/grit.git'
-    @test_repo_location = "#{RAILS_ROOT}/data/repositories/grit.git"
+    @test_repo_parent = "#{RAILS_ROOT}/data/repositories/"
+    @test_repo_location = "#{@test_repo_parent}grit.git"
   end
 
   describe "class methods" do
@@ -20,6 +21,7 @@ describe "Repo" do
         end
         repo = subject.find(@test_repo_url)
         repo.class.should == Grit::Repo
+        FileUtils.rm_rf @test_repo_location
       end    
     end
     
@@ -52,7 +54,7 @@ describe "Repo" do
         end
       end
     end
-    
+        
     it "clones a bare repository to the repositories directory" do
       subject.clone_bare_repo(@test_repo_url)
       File.directory?(@test_repo_location).should == true
@@ -60,7 +62,12 @@ describe "Repo" do
     end
 
     describe ".update_repo" do
-      it "updates the bare repo from the remote master branch"
+      it "updates the bare repo from the remote master branch" do
+        `git init #{@test_repo_parent}remote`
+        `git clone -l #{@test_repo_parent}remote #{@test_repo_location}`
+        subject.update_repo(@test_repo_url)
+        # do some cleanup
+      end
     end
 
     describe ".repo_exists?" do

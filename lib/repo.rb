@@ -24,7 +24,9 @@ class Repo
   end
   
   def self.update_repo(url)
-    #todo
+    repo_location = self.get_repo_path(url)
+    #attempt a pull or fetch - why won't grit do this?!
+    `cd repo_location && git pull`
   end
   
   def self.repo_exists?(url)
