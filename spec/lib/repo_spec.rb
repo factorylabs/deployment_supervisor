@@ -5,8 +5,8 @@ describe "Repo" do
 
   before :each do
     @test_repo_url = 'http://github.com/mojombo/grit.git'
-    @test_repo_parent = "#{RAILS_ROOT}/data/repositories/"
-    @test_repo_location = "#{@test_repo_parent}grit.git"
+    @repo_dir = "#{Rails.root.to_s}/data/repositories/"
+    @test_repo_location = "#{@repo_dir}grit.git"
   end
 
   describe "class methods" do
@@ -22,11 +22,11 @@ describe "Repo" do
         repo = subject.find(@test_repo_url)
         repo.class.should == Grit::Repo
         FileUtils.rm_rf @test_repo_location
-      end    
+      end
     end
-    
+
     describe ".update_or_create_bare_repo" do
-      
+
       context "if a repo does exist" do
         before(:each) do
           subject.stub(:repo_exists?).and_return true
@@ -35,7 +35,7 @@ describe "Repo" do
         it "updates a bare repo if it already exists" do
           subject.should_receive(:update_repo)
           subject.update_or_create_bare_repo(@test_repo_url)
-        end        
+        end
       end
 
       context "if a repo does not exist" do
@@ -54,7 +54,7 @@ describe "Repo" do
         end
       end
     end
-        
+
     describe ".clone_bare_repo" do
       it "clones a bare repository to the repositories directory" do
         subject.clone_bare_repo(@test_repo_url)
@@ -65,10 +65,21 @@ describe "Repo" do
 
     describe ".update_repo" do
       it "updates the bare repo from the remote master branch" do
-        `git init #{@test_repo_parent}remote`
-        `git clone -l #{@test_repo_parent}remote #{@test_repo_location}`
+        `cd #{@repo_dir} &&
+         git init remote &&
+         cd remote &&
+         echo 'some text' > file.txt &&
+         git add file.txt &&
+         git commit -m 'add file'`
+        `git clone -l #{@repo_dir}remote #{@test_repo_location}`
+        File.exist?("#{@test_repo_location}/file.txt").should == true
+        `cd #{@repo_dir}/remote &&
+         echo 'more text' > new.txt &&
+         git add new.txt &&
+         git commit -m 'add another file'`
         subject.update_repo(@test_repo_url)
-        # do some cleanup
+        File.exist?("#{@test_repo_location}/new.txt").should == true
+        FileUtils.rm_rf [@test_repo_location, "#{@repo_dir}/remote"]
       end
     end
 
@@ -92,11 +103,11 @@ describe "Repo" do
         File.expand_path(subject.get_repo_path(@test_repo_url)).should == File.expand_path(@test_repo_location)
       end
     end
-    
+
     describe ".get_repo_name" do
       it "returns the repository name of the bare git repository" do
         subject.get_repo_name(@test_repo_url).should == "grit.git"
       end
-    end    
+    end
   end
 end
