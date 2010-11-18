@@ -7,15 +7,10 @@ class Repo
   delegate :commits, :to => :grit_repo
 
   # class methods
-  
-  def self.find(url)
-    new(url)
-#    Grit::Repo.new(self.update_or_create_bare_repo(url))
-  end
 
-  def grit_repo
-    @grit_repo ||= Grit::Repo.new(self.update_or_create_bare_repo(url))
-  end
+  # def grit_repo
+    # @grit_repo ||= Grit::Repo.new(self.update_or_create_bare_repo(url))
+  # end
 
   def initialize(url)
     self.url = url

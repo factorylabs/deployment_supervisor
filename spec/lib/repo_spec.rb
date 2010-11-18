@@ -9,7 +9,7 @@ describe "Repo" do
     @test_repo_location = "#{@repo_dir}grit.git"
   end
 
-  subject { Repo.find(@test_repo_url) }
+  subject { Repo.new(@test_repo_url) }
 
   describe "#name" do
     it "returns the repository name of the bare git repository" do
@@ -102,13 +102,13 @@ describe "Repo" do
     
     subject { Repo }
     
-    describe ".find" do      
+    describe ".new" do      
       it "returns a repo object" do
         subject.stub(:update_or_create_bare_repo) do
           `git init --bare #{@test_repo_location}`
           @test_repo_location
         end
-        repo = subject.find(@test_repo_url)
+        repo = subject.new(@test_repo_url)
         repo.class.should == Repo
         FileUtils.rm_rf @test_repo_location
       end
